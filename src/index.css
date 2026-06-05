@@ -1,0 +1,6 @@
+/* Cleaned up default styles to avoid layout conflicts */
+body {
+	margin: 0;
+	padding: 0;
+	box-sizing: border-box;
+}

@@ -1,5 +1,7 @@
 import { useEffect, useRef } from "react";
 import type { Mesh } from "../types";
+import vertexShaderSrc from "../shaders/viewer.vert.glsl?raw";
+import fragmentShaderSrc from "../shaders/viewer.frag.glsl?raw";
 
 interface ThreeDViewerProps {
 	mesh: Mesh | null;
@@ -46,57 +48,6 @@ export function ThreeDViewer({ mesh, onWebGLError }: ThreeDViewerProps) {
 		gl.disable(gl.CULL_FACE);
 		gl.enable(gl.DEPTH_TEST);
 
-		// Setup shaders
-		const vs = `
-      attribute vec3 aPos;
-      uniform float uRotX;
-      uniform float uRotY;
-      uniform float uZoom;
-      void main() {
-        vec3 p = aPos;
-        float cy = cos(uRotY);
-        float sy = sin(uRotY);
-        p = vec3(
-          p.x * cy + p.z * sy,
-          p.y,
-         -p.x * sy + p.z * cy
-        );
-        float cx = cos(uRotX);
-        float sx = sin(uRotX);
-        p = vec3(
-          p.x,
-          p.y * cx - p.z * sx,
-          p.y * sx + p.z * cx
-        );
-        float ay = radians(45.0);
-        float ax = radians(35.264);
-        p = vec3(
-          p.x * cos(ay) + p.z * sin(ay),
-          p.y,
-         -p.x * sin(ay) + p.z * cos(ay)
-        );
-        p = vec3(
-          p.x,
-          p.y * cos(ax) - p.z * sin(ax),
-          p.y * sin(ax) + p.z * cos(ax)
-        );
-        p *= uZoom;
-        gl_Position = vec4(
-          p.xy,
-          -p.z * 0.001,
-          1.0
-        );
-      }
-    `;
-
-		const fs = `
-      precision mediump float;
-      uniform vec4 uColor;
-      void main() {
-        gl_FragColor = uColor;
-      }
-    `;
-
 		const compile = (type: number, src: string) => {
 			const s = gl.createShader(type)!;
 			gl.shaderSource(s, src);
@@ -105,8 +56,8 @@ export function ThreeDViewer({ mesh, onWebGLError }: ThreeDViewerProps) {
 		};
 
 		const prog = gl.createProgram()!;
-		gl.attachShader(prog, compile(gl.VERTEX_SHADER, vs));
-		gl.attachShader(prog, compile(gl.FRAGMENT_SHADER, fs));
+		gl.attachShader(prog, compile(gl.VERTEX_SHADER, vertexShaderSrc));
+		gl.attachShader(prog, compile(gl.FRAGMENT_SHADER, fragmentShaderSrc));
 		gl.linkProgram(prog);
 		progRef.current = prog;
 

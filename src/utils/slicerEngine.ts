@@ -1,3 +1,4 @@
+import JSZip from "jszip";
 import type { Mesh } from "../types";
 
 // STL parser
@@ -48,20 +49,12 @@ export function parseSTL(buf: ArrayBuffer): Mesh {
 
 // 3MF parser
 export async function parse3MF(buf: ArrayBuffer): Promise<Mesh> {
-	// eslint-disable-next-line @typescript-eslint/no-explicit-any
-	const JSZip = (window as any).JSZip;
-	if (!JSZip) {
-		throw new Error(
-			"JSZip is not loaded. Please wait or check your internet connection.",
-		);
-	}
 	const zip = await JSZip.loadAsync(buf);
 	let modelXml: string | null = null;
 
 	for (const [name, file] of Object.entries(zip.files)) {
 		if (name.toLowerCase().endsWith(".model")) {
-			// eslint-disable-next-line @typescript-eslint/no-explicit-any
-			modelXml = await (file as any).async("string");
+			modelXml = await file.async("string");
 			break;
 		}
 	}

@@ -1,4 +1,5 @@
 import { useState } from "react";
+import JSZip from "jszip";
 import "./App.css";
 import type { Mesh, Slice } from "./types";
 import {
@@ -127,13 +128,6 @@ function App() {
 
 		if (!asZip) {
 			nonEmpty.forEach((s, i) => downloadSVG(s, i + 1));
-			return;
-		}
-
-		// eslint-disable-next-line @typescript-eslint/no-explicit-any
-		const JSZip = (window as any).JSZip;
-		if (!JSZip) {
-			setStatusText("Error: JSZip is not loaded.");
 			return;
 		}
 

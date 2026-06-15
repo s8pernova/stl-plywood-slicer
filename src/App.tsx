@@ -148,7 +148,7 @@ function App() {
 	return (
 		<div style={{ maxWidth: "1000px", margin: "0 auto" }}>
 			<div className="card">
-				<h2>Mesh Slicer</h2>
+				<h2>Plywood Slicer</h2>
 				<p className="subtitle">
 					Load an STL or 3MF file, preview in 3D, set your material
 					thickness, and download per-slice SVGs.
